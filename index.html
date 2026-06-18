@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>测测你最适合应援的女声优 · BanG Dream!</title>
+<style>
+:root {
+ --bg: #120f18; --card: #1e1828; --gold: #f5a623; --pink: #ff6b9d;
+ --rose: #e84393; --purple: #a29bfe; --text: #ece6f4; --muted: #8b7fa0;
+ --border: #3a2f4a; --accent: #ff6b9d; --accent-soft: rgba(255,107,157,.06);
+ --blue: #74b9ff; --green: #55efc4; --mujica: #9b59b6;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+ font-family: -apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+ background: var(--bg);
+ background-image:
+  radial-gradient(ellipse at 20% 0%, rgba(255,107,157,.08) 0%, transparent 50%),
+  radial-gradient(ellipse at 80% 100%, rgba(155,89,182,.08) 0%, transparent 50%);
+ color: var(--text); min-height: 100vh;
+ display: flex; align-items: center; justify-content: center;
+ padding: 16px; padding-top: 64px;
+}
+.shop-bar {
+ position: fixed; top:0; left:0; right:0; z-index: 100;
+ background: var(--bg); border-bottom: 1px solid var(--border);
+ padding: 0 16px; height: 48px;
+ display: flex; align-items: center; justify-content: center;
+ box-shadow: 0 2px 16px rgba(0,0,0,.4);
+}
+.shop-bar .brand {
+ font-size: 14px; font-weight: 800; letter-spacing: 2px;
+ background: linear-gradient(135deg, var(--pink), #ffc0d9, var(--purple));
+ -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.container {
+ max-width: 580px; width: 100%; background: var(--card); border-radius: 24px;
+ padding: 36px 28px; border: 1px solid var(--border);
+ box-shadow: 0 4px 32px rgba(0,0,0,.3); position: relative; overflow: hidden;
+ transition: box-shadow .6s, border-color .6s;
+}
+.container::before {
+ content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+ background: linear-gradient(90deg, var(--pink), var(--purple), var(--gold));
+}
+.container.star-aura {
+ border-color: rgba(245,166,35,.35);
+ box-shadow: 0 0 40px rgba(245,166,35,.12), 0 4px 32px rgba(0,0,0,.3);
+}
+.container.star-aura::before {
+ background: linear-gradient(90deg, var(--gold), #ffe8b0, var(--gold));
+ animation: shimmer-bar 2s ease-in-out infinite;
+}
+@keyframes shimmer-bar { 0%,100%{opacity:1} 50%{opacity:.7} }
+.intro { text-align: center; }
+.intro-badge {
+ display: inline-block; font-size: 10px; letter-spacing: 3px;
+ color: var(--pink); border: 1px solid var(--pink);
+ border-radius: 20px; padding: 4px 14px; margin-bottom: 14px;
+}
+.intro h1 { font-size: 26px; margin-bottom: 6px; line-height: 1.35; }
+.intro .sub { font-size: 13px; color: var(--muted); margin-bottom: 24px; line-height: 1.6; }
+.intro .bands {
+ display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-bottom: 20px;
+}
+.intro .bands span {
+ font-size: 10px; padding: 3px 10px; border-radius: 12px;
+ background: rgba(255,255,255,.03); color: var(--muted); border: 1px solid var(--border);
+}
+.intro .bands span.hot { color: var(--pink); border-color: rgba(255,107,157,.4); }
+.intro .bands span.mujica { color: #c39bd3; border-color: rgba(155,89,182,.4); }
+.progress-wrap { margin-bottom: 26px; }
+.progress-bar { height: 5px; background: var(--border); border-radius: 3px; overflow: hidden; }
+.progress-fill {
+ height: 100%; background: linear-gradient(90deg, var(--pink), var(--purple));
+ border-radius: 3px; transition: width .3s;
+}
+.progress-text { font-size: 11px; color: var(--muted); margin-top: 6px; text-align: right; }
+.q-num { font-size: 12px; color: var(--pink); font-weight: 700; letter-spacing: 1px; margin-bottom: 6px; }
+.q-text { font-size: 19px; font-weight: 600; margin-bottom: 22px; line-height: 1.45; }
+.options { display: flex; flex-direction: column; gap: 9px; }
+.opt-btn {
+ background: transparent; border: 1px solid var(--border); border-radius: 12px;
+ padding: 14px 16px; font-size: 14px; color: var(--text); cursor: pointer;
+ transition: all .15s; text-align: left; font-family: inherit;
+ display: flex; align-items: center; gap: 10px;
+}
+.opt-btn:hover { border-color: var(--pink); background: var(--accent-soft); }
+.opt-btn:active { transform: scale(0.99); }
+.opt-letter {
+ width: 28px; height: 28px; border-radius: 8px;
+ background: rgba(255,255,255,.04); display: flex; align-items: center; justify-content: center;
+ font-size: 12px; font-weight: 700; color: var(--muted); flex-shrink: 0;
+}
+.opt-btn:hover .opt-letter { background: var(--pink); color: #fff; }
+.loading-wrap { text-align: center; padding: 40px 0; }
+.loading-orb {
+ width: 64px; height: 64px; border-radius: 50%; margin: 0 auto 22px;
+ background: conic-gradient(var(--pink), var(--purple), var(--pink));
+ animation: spin 1.2s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-text { font-size: 13px; color: var(--muted); }
+.result { text-align: center; position: relative; }
+.result-emoji {
+ font-size: 88px; margin-bottom: 8px;
+ animation: popIn .5s cubic-bezier(.2,1.4,.4,1); display: inline-block;
+}
+@keyframes popIn {
+ 0% { transform: scale(0) rotate(-15deg); }
+ 60% { transform: scale(1.12); }
+ 100% { transform: scale(1); }
+}
+.result-label { font-size: 11px; color: var(--muted); letter-spacing: 2px; margin-bottom: 4px; }
+.result-name { font-size: 32px; font-weight: 800; margin-bottom: 4px; }
+.result-role { font-size: 14px; color: var(--pink); margin-bottom: 4px; }
+.result-tagline { font-size: 13px; color: var(--muted); margin-bottom: 18px; }
+.result-desc {
+ text-align: left; line-height: 1.8; font-size: 13px;
+ background: rgba(255,255,255,.02); border-radius: 14px;
+ padding: 18px; margin-bottom: 16px; border: 1px solid var(--border);
+}
+.result-meta {
+ display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; margin-bottom: 18px;
+}
+.meta-tag {
+ font-size: 10px; padding: 4px 12px; border-radius: 14px;
+ background: rgba(255,255,255,.03); color: var(--muted); border: 1px solid var(--border);
+}
+.btn {
+ font-family: inherit; border: none; border-radius: 14px;
+ padding: 14px 28px; font-size: 16px; font-weight: 700; cursor: pointer;
+ transition: all .15s; display: inline-flex; align-items: center; gap: 8px;
+ justify-content: center; width: 100%; letter-spacing: 1px;
+}
+.btn-main { background: var(--pink); color: #fff; margin-top: 4px; }
+.btn-main:hover { background: #ff85ad; }
+.btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--text); margin-top: 10px; }
+.btn-ghost:hover { border-color: var(--pink); }
+.back-link {
+ display: inline-flex; align-items: center; gap: 4px;
+ background: none; border: none; cursor: pointer; font-family: inherit;
+ font-size: 12px; color: var(--muted); padding: 4px 0; margin-bottom: 12px;
+}
+.back-link:hover { color: var(--pink); }
+.notice {
+ font-size: 10px; color: var(--muted); text-align: center;
+ margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--border);
+}
+.egg-rays {
+ position: absolute; left: 50%; top: 96px; width: 520px; height: 520px;
+ transform: translate(-50%,-50%);
+ background: repeating-conic-gradient(from 0deg, rgba(245,166,35,.12) 0deg 5deg, transparent 5deg 17deg);
+ border-radius: 50%; pointer-events: none; z-index: 0; opacity: .75;
+ animation: rays-spin 22s linear infinite;
+}
+@keyframes rays-spin { to { transform: translate(-50%,-50%) rotate(360deg); } }
+.egg-star {
+ font-size: 92px; position: relative; z-index: 1; display: inline-block;
+ filter: drop-shadow(0 0 18px rgba(245,166,35,.6));
+ animation: popIn .5s cubic-bezier(.2,1.4,.4,1), star-float 3.2s ease-in-out infinite;
+}
+@keyframes star-float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-9px)} }
+.btn-yes {
+ background: linear-gradient(135deg, #f5a623, #ffe8b0, #f5a623);
+ color: #2a2012; font-weight: 800; animation: yes-glow 1.8s ease-in-out infinite;
+}
+@keyframes yes-glow {
+ 0%,100%{box-shadow:0 0 12px rgba(245,166,35,.35)}
+ 50%{box-shadow:0 0 28px rgba(245,166,35,.7)}
+}
+.btn-no { transition: transform .28s cubic-bezier(.2,1.6,.4,1); }
+.result-name.golden-shimmer {
+ background: linear-gradient(135deg, #f5a623, #ffe8b0, #fff3cd, #f5a623);
+ background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+ animation: shimmer-text 3s linear infinite;
+}
+@keyframes shimmer-text {
+ 0%{background-position:0% center} 100%{background-position:200% center}
+}
+@media (max-width: 420px) {
+ .container { padding: 24px 18px; }
+ .q-text { font-size: 17px; }
+ .intro h1 { font-size: 22px; }
+}
+</style>
+</head>
+<body>
+<nav class="shop-bar"><span class="brand">BanG Dream! · 声优应援鉴定</span></nav>
+<div class="container" id="app"></div>
+<script>
+var state='intro', idx=0, answers=[], resultKey=null;
+var QUIZ_TITLE='测测你最适合应援的女声优';
+var QUIZ_SUBTITLE='20 道题，涵盖五团 · MyGO!!!!! · Ave Mujica 动画主要女声优——鉴定你的本命推。';
+var BADGE_TEXT='BanG Dream! · 全世代鉴定';
+var EGG_THRESHOLD=14;
+var SCORE_KEYS=[
+ 'aina','aimi','miku','raychell','sakura','ami','hikasa','sumire',
+ 'otsuka','nishizawa','ikumi','nozomi','minami','nishimoto',
+ 'hinana','rin','aoki','kohinata','hayashi',
+ 'riko','shiori','ibuki','mei'
+];
+var QUESTIONS=[
+ {q:'你第一次接触 BanG Dream! 是因为？',opts:[
+  {t:'Roselia / PPP 经典 live 片段入坑',s:{aina:2,aimi:2}},
+  {t:'It\'s MyGO!!!!! 或诗超绊相关切片',s:{hinana:3,rin:1,kohinata:1}},
+  {t:'Ave Mujica 歌剧感演出被震撼',s:{riko:3,shiori:2,mei:1}},
+  {t:'朋友安利，说整个 CiRCLE 都值得',s:{hikasa:2,ami:1,miku:1}}]},
+ {q:'你理想中的 live 现场氛围是？',opts:[
+  {t:'Roselia 那种压倒性专业与震撼',s:{aina:3,sakura:1}},
+  {t:'PPP 武道馆 Star Beat 大合唱',s:{aimi:3,ikumi:1}},
+  {t:'MyGO!!!!! 诗超绊后全员拥抱的破防现场',s:{hinana:2,hayashi:2,kohinata:1}},
+  {t:'Ave Mujica 剧场式暗黑华丽舞台',s:{riko:2,shiori:2,ibuki:1,mei:1}}]},
+ {q:'推一个女声优，你最看重什么？',opts:[
+  {t:'唱功与舞台表现力，实力说话',s:{aina:2,raychell:2,hinana:1}},
+  {t:'角色与声优的反差/演技深度',s:{riko:2,shiori:2,hayashi:2,sakura:1}},
+  {t:'元气和感染力，能把人拉起来',s:{aimi:2,rin:2,miku:1}},
+  {t:'独特个性，越怪越爱',s:{aoki:2,sumire:2,ibuki:2,otsuka:1}}]},
+ {q:'新单曲发布日，你会？',opts:[
+  {t:'零点蹲守，循环到会唱',s:{aina:2,sakura:2,kohinata:2}},
+  {t:'立刻安利，拉人一起听',s:{aimi:2,rin:2,nozomi:1}},
+  {t:'先安静听完，品味歌词与情绪',s:{hinana:2,hayashi:2,shiori:1}},
+  {t:'分析编曲、MV 细节和角色心境',s:{riko:2,mei:2,minami:1}}]},
+ {q:'你更喜欢的角色类型是？',opts:[
+  {t:'高冷天才 / 完美主义者',s:{aina:2,sakura:2,riko:1}},
+  {t:'天然呆但关键时刻超可靠',s:{miku:2,otsuka:2,aoki:1}},
+  {t:'外表温柔内心复杂 / 有故事的人',s:{hayashi:3,hinana:1,shiori:2}},
+  {t:'慵懒毒舌 / 酷帅话不多',s:{ami:2,aoki:2,mei:2,nishizawa:1}}]},
+ {q:'关于买周边，你的态度是？',opts:[
+  {t:'吧唧立牌专辑，能买就买',s:{aimi:2,rin:2,ibuki:1}},
+  {t:'只推本命，精准应援',s:{sakura:2,hinana:2,riko:1}},
+  {t:'看心情，但 live 票一定冲',s:{raychell:2,ami:1,mei:1}},
+  {t:'更想支持声优本人的活动',pure:true,s:{hikasa:1,kohinata:1}}]},
+ {q:'在粉丝社群中，你通常是？',opts:[
+  {t:'技术流，分析歌谱和 live 细节',s:{aina:2,sakura:2,minami:1}},
+  {t:'气氛组，表情包和整活担当',s:{aimi:2,rin:2,miku:1}},
+  {t:'潜水观察，偶尔一句神评',s:{ami:2,aoki:2,nishimoto:1}},
+  {t:'翻译搬运 / 深度考据党',s:{raychell:1,sumire:1,mei:2,shiori:1}}]},
+ {q:'MyGO!!!!! 里最能共鸣的是？',opts:[
+  {t:'灯——把说不出口的心意写成诗',s:{hinana:3}},
+  {t:'爱音——社交力满点的阳角努力家',s:{rin:3}},
+  {t:'乐奈——想来就来想走就走的猫',s:{aoki:3}},
+  {t:'立希 / 爽世——嘴硬心软或复杂过去',s:{kohinata:2,hayashi:2}}]},
+ {q:'Ave Mujica 里最能吸引你的是？',opts:[
+  {t:'祥子——背负一切的「忘却」',s:{riko:3}},
+  {t:'睦——沉默背后破碎的 Mortis',s:{shiori:3}},
+  {t:'初华——偶像与秘密的双重面',s:{hinana:2,ibuki:1}},
+  {t:'海铃 / 喵梦——务实派或流量野心',s:{mei:2,ibuki:2}}]},
+ {q:'你对「多推」的态度是？',opts:[
+  {t:'本命只有一个，其他欣赏',s:{sakura:2,riko:1,hinana:1}},
+  {t:'各团都是家人，雨露均沾',s:{aimi:2,hikasa:2,nishimoto:1}},
+  {t:'谁 live 表现好就推谁',s:{raychell:2,rin:1,ibuki:1}},
+  {t:'声优本人比角色更重要',pure:true,s:{miku:1,sumire:1}}]},
+ {q:'看动画时最让你破防的场景是？',opts:[
+  {t:'角色突破心魔站上舞台',s:{aina:2,hinana:2,sakura:1}},
+  {t:'伙伴互相打气 / 和解拥抱',s:{aimi:2,rin:1,hayashi:2,hikasa:1}},
+  {t:'诗超绊 / 迷星叫那种集体崩溃再站起',s:{hinana:2,kohinata:2,hayashi:1}},
+  {t:'面具脱落、真相揭露的戏剧瞬间',s:{riko:2,shiori:2,mei:1}}]},
+ {q:'你的应援口号风格更接近？',opts:[
+  {t:'「最高！」「神回！」简短有力',s:{aina:2,raychell:1,kohinata:1}},
+  {t:'「イッチャイチャ！」全场合唱',s:{aimi:3}},
+  {t:'MyGO 式「一起成为人类吧」',s:{hinana:2,rin:1,hayashi:1}},
+  {t:'不太喊，内心已经喊了一万遍',s:{ami:2,aoki:2,shiori:1,minami:1}}]},
+ {q:'你刷声优相关内容的频率？',opts:[
+  {t:'每天，推特微博 B 站轮着刷',s:{aimi:2,rin:2,ibuki:1}},
+  {t:'有 live 或新情报才集中关注',s:{sakura:2,riko:1,mei:1}},
+  {t:'偶尔，但一刷就停不下来',s:{ami:1,miku:2,nozomi:1}},
+  {t:'更关注作品，不太追私生活',pure:true,s:{hikasa:2,otsuka:1}}]},
+ {q:'如果让你加入一个乐队，你想当？',opts:[
+  {t:'主唱，站在最前面扛大旗',s:{aina:2,raychell:1,hinana:1,riko:1}},
+  {t:'吉他手，酷酷话不多',s:{ami:2,aoki:2,otsuka:1}},
+  {t:'键盘手，角落默默发光',s:{sakura:2,minami:2,shiori:1}},
+  {t:'鼓手 / 气氛担当',s:{kohinata:2,hikasa:2,miku:1,nishimoto:1}}]},
+ {q:'五团里你最容易推的类型？',opts:[
+  {t:'PPP 队长型元气领袖',s:{aimi:2,ikumi:1}},
+  {t:'Roselia 实力至上型',s:{aina:2,sakura:1,minami:1,raychell:1}},
+  {t:'Afterglow 青梅竹马羁绊',s:{ami:1,hikasa:2,raychell:1,nishimoto:1}},
+  {t:'Pastel＊Palettes / HHW 偶像欢乐',s:{miku:2,nozomi:2,sumire:1,nishizawa:1}}]},
+ {q:'声优在广播/生放送的哪种表现最戳你？',opts:[
+  {t:'认真聊音乐与演技',s:{aina:2,sakura:2,shiori:1}},
+  {t:'突然暴走或玩梗的反差',s:{aimi:2,rin:2,miku:1,ibuki:1}},
+  {t:'成员间自然化学反应',s:{hayashi:2,hikasa:1,kohinata:1,nishimoto:1}},
+  {t:'外语或特殊技能惊艳全场',s:{raychell:3,sumire:1,mei:1}}]},
+ {q:'朋友说你推 BanG Dream 像什么？',opts:[
+  {t:'像参加信仰仪式，极其虔诚',s:{aina:2,sakura:1,riko:1}},
+  {t:'像打了鸡血随时能唱 Star Beat',s:{aimi:2,rin:1}},
+  {t:'像追悬疑剧，每集都要分析',s:{hayashi:2,shiori:2,mei:1}},
+  {t:'像老烟枪，不紧不慢但离不开',s:{ami:2,aoki:2,otsuka:1}}]},
+ {q:'你最能共情的 BanG Dream 主题是？',opts:[
+  {t:'「把心意变成音乐传出去」',s:{aina:2,hinana:2,sakura:1}},
+  {t:'「和伙伴一起，什么都能做到」',s:{aimi:2,hikasa:2,rin:1}},
+  {t:'「即使迷路，也能一起成为人类」',s:{hinana:2,hayashi:1,kohinata:1,rin:1}},
+  {t:'「面具之下，你看见了什么」',s:{riko:2,shiori:2,ibuki:1}}]},
+ {q:'如果只能保留一个瞬间，你选？',opts:[
+  {t:'Roselia × Rausch und/and Craziness',s:{aina:2,raychell:1,sakura:1}},
+  {t:'PPP 武道馆 Star Beat',s:{aimi:3}},
+  {t:'MyGO 诗超绊 / 迷星叫 live',s:{hinana:2,kohinata:2,hayashi:1}},
+  {t:'Ave Mujica 首演或 KiLLKiSS',s:{riko:2,shiori:1,mei:1,ibuki:1}}]},
+ {q:'最后一题：对你来说，应援的本质是？',opts:[
+  {t:'见证她不断突破上限',s:{aina:2,riko:1,kohinata:1}},
+  {t:'把快乐分享给更多人',s:{aimi:2,rin:1,miku:1}},
+  {t:'在喜欢里找到属于自己的位置',pure:true,s:{hikasa:2,ami:1,hayashi:1}},
+  {t:'一种不需要理由的「就是推」',s:{sumire:2,aoki:2,ibuki:1,mei:1}}]}
+];
+var RESULTS={
+ star:{name:'爱美',emoji:'⭐',color:'var(--gold)',
+  role:'饰 户山香澄（Poppin\'Party）',tagline:'隐藏结局 · PPP 灵魂',
+  desc:'你一路都在选最纯粹的答案——<strong>爱美</strong>！Star Beat 响起时，你们会是同一类人。',
+  tags:['Star Beat','イッチャイチャ','PPP 永存']},
+ aina:{name:'相羽爱奈',emoji:'🌹',color:'var(--rose)',
+  role:'饰 凑友希那（Roselia）',tagline:'硬核实力派 · 舞台即信仰',
+  desc:'你最适合应援 <strong>相羽爱奈</strong>！你和友希那一样追求极致舞台，会研究每一个音、每一场 live 的细节。',
+  tags:['Roselia 主唱','唱功怪物','live 狂魔']},
+ aimi:{name:'爱美',emoji:'🎸',color:'var(--pink)',
+  role:'饰 户山香澄（Poppin\'Party）',tagline:'元气全开 · 永远的队长',
+  desc:'你最适合应援 <strong>爱美</strong>！推活充满感染力——新歌安利、live 带头 call，和香澄一模一样。',
+  tags:['PPP 队长','元气传染','Star Beat']},
+ miku:{name:'伊藤美来',emoji:'🌈',color:'var(--blue)',
+  role:'饰 丸山彩 / 弦卷心',tagline:'天然治愈 · 快乐传播机',
+  desc:'你最适合应援 <strong>伊藤美来</strong>！天然但不幼稚，无厘头里的真诚最戳你。',
+  tags:['双倍角色','天然系','Happy Happy']},
+ raychell:{name:'Raychell',emoji:'👑',color:'var(--purple)',
+  role:'饰 宇田川亚子 / 宇田川巴',tagline:'酷帅双语 · 舞台女王',
+  desc:'你最适合应援 <strong>Raychell</strong>！你推的是气场——双语 MC 和 live 表现就是你的加分项。',
+  tags:['双语 MC','双倍担当','Cool & Hot']},
+ sakura:{name:'佐仓绫音',emoji:'🎹',color:'var(--green)',
+  role:'饰 冰川纱夜（Roselia）',tagline:'认真推活 · 隐藏温柔',
+  desc:'你最适合应援 <strong>佐仓绫音</strong>！表面理性内里炽热，认定了就非常专一。',
+  tags:['Roselia 键盘','认真系','反差萌']},
+ ami:{name:'前岛亚美',emoji:'☕',color:'#b2bec3',
+  role:'饰 青叶摩卡（Afterglow）',tagline:'随缘佛系 · 慵懒天才',
+  desc:'你最适合应援 <strong>前岛亚美</strong>！Moca 式松弛推活——不卷不抢，重要瞬间从不缺席。',
+  tags:['Afterglow 吉他','慵懒推','关键时刻在线']},
+ hikasa:{name:'日笠阳子',emoji:'☀️',color:'var(--gold)',
+  role:'饰 泽岛弥实（Afterglow）',tagline:'温暖守护 · 大姐姐',
+  desc:'你最适合应援 <strong>日笠阳子</strong>！陪伴式推活，温和但长情，五团皆家人。',
+  tags:['Afterglow 鼓手','大姐姐','稳定长情']},
+ sumire:{name:'上坂堇',emoji:'🛸',color:'var(--purple)',
+  role:'饰 若宫伊芙 / 北泽哈格姆',tagline:'奇妙电波 · 异次元推活',
+  desc:'你最适合应援 <strong>上坂堇</strong>！武士道与忍者逻辑，电波只有懂的人才 get。',
+  tags:['双倍角色','电波系','武士道']},
+ otsuka:{name:'大冢纱英',emoji:'🎻',color:'var(--blue)',
+  role:'饰 花园たえ（Poppin\'Party）',tagline:'天然天才 · 兔子星人',
+  desc:'你最适合应援 <strong>大冢纱英</strong>！たえ的脱线天才和纱英的认真反差，正是你的推点。',
+  tags:['PPP 吉他','天然系','オーイシ']},
+ nishizawa:{name:'西泽友惠',emoji:'🍫',color:'#fdcb6e',
+  role:'饰 山吹沙绫（Pastel＊Palettes）',tagline:'温柔害羞 · 巧克力控',
+  desc:'你最适合应援 <strong>西泽友惠</strong>！安静内敛但内心丰富，和你一样不张扬地深推。',
+  tags:['Pastel 贝斯','害羞系','巧克力']},
+ ikumi:{name:'Ikumi',emoji:'🌶️',color:'var(--rose)',
+  role:'饰 市谷有咲（Poppin\'Party）',tagline:'傲娇程序员 · 口嫌体正直',
+  desc:'你最适合应援 <strong>Ikumi</strong>！有咲的傲娇和 Ikumi 的反差，对口嫌体正直型推活。',
+  tags:['PPP 键盘','傲娇','程序员']},
+ nozomi:{name:'西田望乃',emoji:'✨',color:'var(--pink)',
+  role:'饰 丸山彩（Pastel＊Palettes）',tagline:'偶像之魂 · 永不放弃',
+  desc:'你最适合应援 <strong>西田望乃</strong>！彩的偶像执着和望乃的努力，和你一样永不放弃。',
+  tags:['Pastel 主唱','偶像魂','永不放弃']},
+ minami:{name:'Minami',emoji:'🎹',color:'var(--green)',
+  role:'饰 白金燐子（Roselia）',tagline:'内向键盘 · 网络巨人',
+  desc:'你最适合应援 <strong>Minami</strong>！燐子的内向与网络上的活跃，和你推活方式高度重合。',
+  tags:['Roselia 键盘','内向系','网络巨人']},
+ nishimoto:{name:'西本りみ',emoji:'🎤',color:'var(--gold)',
+  role:'饰 羽泽つぐみ / 弦卷かおる',tagline:'双倍劳模 · 气氛制造',
+  desc:'你最适合应援 <strong>西本りみ</strong>！つぐみ的元气与かおる的脱线，双倍魅力双倍推。',
+  tags:['双倍担当','劳模系','气氛组']},
+ hinana:{name:'羊宮妃那',emoji:'🐑',color:'#dfe6e9',
+  role:'饰 高松灯 / 三角初华',tagline:'诗与光 · 迷途中的声音',
+  desc:'你最适合应援 <strong>羊宮妃那</strong>！灯的诗意与初华的双重面，你都懂——「一起成为人类吧」说到了心坎里。',
+  tags:['MyGO 主唱','Ave Mujica','诗超绊']},
+ rin:{name:'立石凛',emoji:'💫',color:'var(--pink)',
+  role:'饰 千早爱音（MyGO!!!!!）',tagline:'阳角努力家 · 社交力 MAX',
+  desc:'你最适合应援 <strong>立石凛</strong>！爱音的「虽然菜但超努力」和凛的阳角能量，就是你的推活风格。',
+  tags:['MyGO 吉他','阳角','努力家']},
+ aoki:{name:'青木陽菜',emoji:'🐱',color:'var(--blue)',
+  role:'饰 要乐奈（MyGO!!!!!）',tagline:'自由猫猫 · 想来就来',
+  desc:'你最适合应援 <strong>青木陽菜</strong>！乐奈的「おもしろい」哲学——不被定义，自由推活。',
+  tags:['MyGO 吉他','猫猫','おもしろい']},
+ kohinata:{name:'小日向美香',emoji:'🥁',color:'var(--rose)',
+  role:'饰 椎名立希（MyGO!!!!!）',tagline:'嘴硬心软 · 鼓点即心跳',
+  desc:'你最适合应援 <strong>小日向美香</strong>！立希的傲娇守护和美香的认真，对口是心非型深推。',
+  tags:['MyGO 鼓手','傲娇','守护']},
+ hayashi:{name:'林鼓子',emoji:'🌙',color:'#81ecec',
+  role:'饰 长崎爽世（MyGO!!!!!）',tagline:'复杂温柔 · 月之背面',
+  desc:'你最适合应援 <strong>林鼓子</strong>！爽世的复杂与鼓子的细腻演技，吸引的就是你这种深度推。',
+  tags:['MyGO 贝斯','复杂系','SOYO']},
+ riko:{name:'佐佐木李子',emoji:'🎭',color:'var(--mujica)',
+  role:'饰 丰川祥子（Ave Mujica）',tagline:'忘却与创造 · 剧场女王',
+  desc:'你最适合应援 <strong>佐佐木李子</strong>！祥子的背负与李子舞台表现力，戏剧性与实力并存。',
+  tags:['Ave Mujica 键盘','Oblivionis','剧场感']},
+ shiori:{name:'渡濑诗织',emoji:'🎪',color:'#6c5ce7',
+  role:'饰 若叶睦（Ave Mujica）',tagline:'沉默深渊 · Mortis 之声',
+  desc:'你最适合应援 <strong>渡濑诗织</strong>！睦的沉默与 Mortis 的爆发，你推的是层次与演技。',
+  tags:['Ave Mujica 吉他','Mortis','演技派']},
+ ibuki:{name:'木户衣吹',emoji:'📸',color:'#fd79a8',
+  role:'饰 祐天寺にゃむ（Ave Mujica）',tagline:'流量野心 · 真实野心家',
+  desc:'你最适合应援 <strong>木户衣吹</strong>！喵梦的直接与衣吹的活力，务实又真实的推活方式。',
+  tags:['Ave Mujica','喵梦','野心家']},
+ mei:{name:'冈田梦以',emoji:'🎸',color:'#636e72',
+  role:'饰 八幡海铃（Ave Mujica）',tagline:'务实多团 · 贝斯雇佣兵',
+  desc:'你最适合应援 <strong>冈田梦以</strong>！海铃的「三十个团」务实与海铃推的冷静理性，完美匹配。',
+  tags:['Ave Mujica 贝斯','多团侠','务实推']}
+};
+var LOADING_STEPS=['正在连接 CiRCLE…','扫描 MyGO 诗稿…','同步 Ave Mujica 舞台…','匹配应援波长…','马上揭晓…'];
+var SHARE_TEXT='我在 BanG Dream! 声优应援鉴定中匹配到了【{name}】！你也来测测：';
+
+function render(){
+ var app=document.getElementById('app');
+ if(state==='intro')renderIntro(app);
+ else if(state==='quiz')renderQuestion(app);
+ else if(state==='egg')renderEgg(app);
+ else if(state==='loading')renderLoading(app);
+ else if(state==='result')renderResult(app);
+}
+function renderIntro(app){
+ app.innerHTML='<div class="intro"><div class="intro-badge">'+BADGE_TEXT+'</div><h1>'+QUIZ_TITLE+'</h1><p class="sub">'+QUIZ_SUBTITLE+'</p><div class="bands"><span>Poppin\'Party</span><span>Afterglow</span><span>Pastel＊Palettes</span><span>Roselia</span><span>Hello, Happy World!</span><span class="hot">MyGO!!!!!</span><span class="mujica">Ave Mujica</span></div><button class="btn btn-main" style="max-width:260px;margin:0 auto;" onclick="startQuiz()">开始测试 →</button></div>';
+}
+function startQuiz(){
+ if(!confirm('🎸 本测试涵盖五团 + MyGO!!!!! + Ave Mujica 主要女声优。\n确认开始鉴定？'))return;
+ state='quiz';idx=0;answers=[];resultKey=null;
+ var c=document.getElementById('app').parentElement;if(c)c.classList.remove('star-aura');
+ render();
+}
+function renderQuestion(app){
+ if(idx>=QUESTIONS.length){advance();return;}
+ var q=QUESTIONS[idx],pct=Math.round((idx/QUESTIONS.length)*100),labels='ABCDEFGH';
+ var html=(idx>0?'<button class="back-link" onclick="goBack()">← 上一题</button>':'')+
+ '<div class="progress-wrap"><div class="progress-bar"><div class="progress-fill" style="width:'+pct+'%"></div></div><div class="progress-text">'+(idx+1)+' / '+QUESTIONS.length+'</div></div>'+
+ '<div class="q-num">第 '+(idx+1)+' 问</div><div class="q-text">'+q.q+'</div><div class="options">';
+ for(var i=0;i<q.opts.length;i++)html+='<button class="opt-btn" onclick="answer('+i+')"><span class="opt-letter">'+(labels[i]||'?')+'</span>'+q.opts[i].t+'</button>';
+ html+='</div>';app.innerHTML=html;
+}
+function answer(c){answers.push(QUESTIONS[idx].opts[c]);idx++;if(idx<QUESTIONS.length){render();return;}advance();}
+function advance(){state=countPure()>=EGG_THRESHOLD?'egg':'loading';render();}
+function countPure(){var n=0;for(var i=0;i<answers.length;i++)if(answers[i].pure)n++;return n;}
+function goBack(){
+ if(state==='egg'){answers.pop();idx--;state='quiz';render();return;}
+ if(state==='quiz'&&idx>0){idx--;answers.pop();render();}
+}
+function renderEgg(app){
+ var c=document.getElementById('app').parentElement;if(c)c.classList.add('star-aura');
+ app.innerHTML='<div class="result" style="position:relative;"><div class="egg-rays"></div><div class="egg-star">⭐</div><div class="result-label" style="position:relative;z-index:1;">隐藏问题 · 真·BanG Dreamer</div><div class="q-text" style="margin-top:10px;position:relative;z-index:1;">你愿意把一生献给 BanG Dream! 吗？</div><p class="result-tagline" style="position:relative;z-index:1;">CiRCLE 必须问你。</p><button class="btn btn-yes" style="max-width:260px;margin:8px auto 0;position:relative;z-index:1;" onclick="chooseStar()">イッチャイチャ！ ☆</button><button class="btn btn-ghost btn-no" style="max-width:260px;margin:10px auto 0;position:relative;z-index:1;" onmouseenter="dodgeNo(this)" onclick="dodgeNo(this)">否</button><p class="notice" id="eggHint" style="visibility:hidden;position:relative;z-index:1;">Star Beat 不接受拒绝 ☆</p></div>';
+}
+function dodgeNo(btn){
+ btn.style.transform='translate('+((Math.random()*2-1)*96).toFixed(0)+'px,'+((Math.random()*2-1)*34).toFixed(0)+'px)';
+ var h=document.getElementById('eggHint');if(h)h.style.visibility='visible';
+}
+function chooseStar(){resultKey='star';state='loading';render();}
+function renderLoading(app){
+ app.innerHTML='<div class="loading-wrap"><div class="loading-orb"></div><p class="loading-text" id="ltxt">'+LOADING_STEPS[0]+'</p></div>';
+ cycleLoading(1);
+}
+async function cycleLoading(i){
+ if(i>=LOADING_STEPS.length){finishToResult();return;}
+ await sleep(500+Math.random()*400);
+ var lt=document.getElementById('ltxt');if(lt)lt.textContent=LOADING_STEPS[i];
+ cycleLoading(i+1);
+}
+function finishToResult(){if(!resultKey)resultKey=calcResult();state='result';render();}
+function calcResult(){
+ var scores={};for(var i=0;i<SCORE_KEYS.length;i++)scores[SCORE_KEYS[i]]=0;
+ for(var i=0;i<answers.length;i++){var s=answers[i].s||{};for(var k in s)if(scores[k]!=null)scores[k]+=s[k];}
+ var best=-1;for(var i=0;i<SCORE_KEYS.length;i++)if(scores[SCORE_KEYS[i]]>best)best=scores[SCORE_KEYS[i]];
+ var top=[];for(var i=0;i<SCORE_KEYS.length;i++)if(scores[SCORE_KEYS[i]]===best)top.push(SCORE_KEYS[i]);
+ return top[Math.floor(Math.random()*top.length)];
+}
+function renderResult(app){
+ var r=RESULTS[resultKey]||RESULTS[SCORE_KEYS[0]],isStar=(resultKey==='star');
+ var c=document.getElementById('app').parentElement;
+ if(c){if(isStar)c.classList.add('star-aura');else c.classList.remove('star-aura');}
+ app.innerHTML='<div class="result"><div class="result-emoji'+(isStar?' egg-star':'')+'">'+r.emoji+'</div><div class="result-label">BanG Dream! 声优应援鉴定</div><div class="result-name'+(isStar?' golden-shimmer':'')+'" style="color:'+(isStar?'':(r.color||'var(--pink)'))+'">'+r.name+'</div><div class="result-role">'+r.role+'</div><div class="result-tagline">'+r.tagline+'</div><div class="result-desc">'+r.desc+'</div><div class="result-meta">'+r.tags.map(function(t){return'<span class="meta-tag">'+t+'</span>';}).join('')+'</div><button class="btn btn-main" onclick="shareIt()">📋 复制结果文案</button><button class="btn btn-ghost" onclick="restart()">🔄 再来一次</button><p class="notice">BanG Dream! Project · 结果仅供娱乐 · live 是真的</p></div>';
+}
+function shareIt(){
+ var name=(resultKey&&RESULTS[resultKey])?RESULTS[resultKey].name:'';
+ var text=SHARE_TEXT.replace('{name}',name)+' '+window.location.href;
+ if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(text).then(function(){alert('已复制！发给 BanG Dreamer 朋友试试 🎸');}).catch(function(){prompt('复制：',text);});
+ else prompt('复制：',text);
+}
+function restart(){
+ var c=document.getElementById('app').parentElement;if(c)c.classList.remove('star-aura');
+ state='intro';idx=0;answers=[];resultKey=null;render();
+}
+function sleep(ms){return new Promise(function(r){setTimeout(r,ms);});}
+render();
+</script>
+</body>
+</html>
